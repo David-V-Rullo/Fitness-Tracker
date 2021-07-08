@@ -37,13 +37,39 @@ router.post('/workouts', async (req, res) => {
 router.put("/workouts/:id", async (req, res) => {
     console.log("PUT route")
     console.log(req.params.id)
-    try {}
+    try {
+        const data = await db.Workout.updateOne(
+            { _id: req.params.id },
+            { $push: { exercises: req.body }}
+        )
+        res.json(data)
+    }
     catch (err) {
         console.log(err)
     }
 })
 
-router.get
+router.get('/workouts/range', async (req, res) => {
+    console.log("GET workout range route")
+    try {
+        const data = await db.Workout.aggregate([
+            {
+                $addFields:
+                {
+                    totalDuration: { $sum: "$exercises.duration"}
+                }
+            }
+        ])
+        console.log(data)
+        res.json(data)
+    }
+
+    catch (err) {
+        console.log(err)
+    }
+})
+
+module.exports = router
 
 
 
